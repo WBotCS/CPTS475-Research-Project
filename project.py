@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-#Flight Analysis Group Project
+# Flight Analysis Group Project by Pragun Kalra and Waddhanabot Yi.
 
 # Function to convert travel time to minutes
 def convert_time_to_minutes(time_str):
@@ -30,7 +30,8 @@ def convert_departure_time(time_str):
         return time_24hr.hour * 60 + time_24hr.minute
     return None
 
-# Load the dataset
+### Load the dataset, change basing on your files location
+
 filepath = '/Users/waddhanabot/Desktop/475/flight.csv'
 flight_data = pd.read_csv(filepath, low_memory=False)
 
