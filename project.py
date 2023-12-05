@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-#Flight Analysis
+#Flight Analysis Group Project
 
 # Function to convert travel time to minutes
 def convert_time_to_minutes(time_str):
