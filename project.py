@@ -7,11 +7,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-# Flight Analysis Group Project by Pragun Kalra and Waddhanabot Yi.
+#Flight Analysis Group Project
 
 # Function to convert travel time to minutes
 def convert_time_to_minutes(time_str):
-    """Convert time string in 'hh:mm' format to minutes, handling various formats."""
     if isinstance(time_str, str):
         try:
             time_str = time_str.replace('h', ' ').replace('m', ' ').strip()
@@ -23,16 +22,31 @@ def convert_time_to_minutes(time_str):
 
 # Function to convert departure time to minutes since midnight
 def convert_departure_time(time_str):
-    """Convert departure time to a 24-hour format in minutes since midnight."""
     if isinstance(time_str, str):
         time_str = time_str.replace("a", "AM").replace("p", "PM")
         time_24hr = datetime.strptime(time_str, '%I:%M%p').time()
         return time_24hr.hour * 60 + time_24hr.minute
     return None
 
-### Load the dataset, change basing on your files location
 
-filepath = '/Users/waddhanabot/Desktop/475/flight.csv'
+def validate_time_format(time_str):
+    if pd.isna(time_str):
+        return False
+    if len(time_str) != 6:
+        return False
+    hour, minute, meridian = time_str[:2], time_str[3:5], time_str[5]
+    if not (hour.isdigit() and minute.isdigit() and meridian in ['a', 'p']):
+        return False
+    if int(hour) > 23 or int(minute) > 59:
+        return False
+    return True
+
+
+
+
+
+# Load the dataset
+filepath = '/Users/pragunkalra/Desktop/475project/flight.csv'
 flight_data = pd.read_csv(filepath, low_memory=False)
 
 # Renaming the 'Airline name' column to remove extra space, if needed
@@ -46,7 +60,8 @@ trimmed_data = flight_data[relevant_columns]
 cleaned_data = trimmed_data.dropna()
 
 # Removing rows with non-standard time formats in the "Depreture Time" column
-cleaned_data = cleaned_data[cleaned_data['Depreture Time'].str.match(r'^\d{2}:\d{2}[ap]$', na=False)]
+
+cleaned_data = cleaned_data[cleaned_data['Depreture Time'].apply(validate_time_format)]
 
 # Converting departure time and travel time to minutes
 cleaned_data['Departure Time (minutes)'] = cleaned_data['Depreture Time'].apply(convert_departure_time)
@@ -94,6 +109,7 @@ residuals = y_test - y_pred
 feature_importances = rf_model.feature_importances_
 features = X_train.columns
 feature_importance_df = pd.DataFrame({'Feature': features, 'Importance': feature_importances})
+print(feature_importance_df)
 
 # Visualization 1: Feature Importance Plot
 plt.figure(figsize=(10, 6))
@@ -120,7 +136,7 @@ plt.ylabel('Residuals')
 plt.title('Residuals of Predictions')
 plt.show()
 
-# Ensure that 'Airline_name' is included in the cleaned_data_cleaned DataFrame
+
 print(cleaned_data_cleaned.columns)
 
 # Visualization 4: Price Comparison by Airline
